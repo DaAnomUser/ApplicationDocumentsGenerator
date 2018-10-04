@@ -80,10 +80,8 @@ namespace bewerbungsemailer
                     var newDocxFileName = Path.Combine(outputFolderBrowserDialog.SelectedPath, row[excelColumnnameWithFilenameForOutput]+ ".docx");
                     var newPdfFileName = Path.Combine(outputFolderBrowserDialog.SelectedPath, row[excelColumnnameWithFilenameForOutput] + ".pdf");
                     
-                    // Create copy and replace Text
                     using (var resultDoc = WordprocessingDocument.Create(newDocxFileName, WordprocessingDocumentType.Document))
                     {
-                        // copy parts from source document to new document
                         foreach (var part in mainDoc.Parts)
                             resultDoc.AddPart(part.OpenXmlPart, part.RelationshipId);
 
@@ -96,7 +94,7 @@ namespace bewerbungsemailer
                                 if (descendant.Text.Contains(placeholder))
                                 {
                                     var newText = row[column].ToString();
-                                    descendant.Text = descendant.Text.Replace(newText, Environment.NewLine);
+                                    descendant.Text = descendant.Text.Replace(placeholder, newText);
                                 }
                             }
 
@@ -112,7 +110,7 @@ namespace bewerbungsemailer
                     var retVal = pdfMetamorphosis.DocxToPdfConvertFile(newDocxFileName, newPdfFileName);
                     if (retVal != 0)
                     {
-                        WriteMessage("Warning: Error while creating PDF File");
+                        WriteMessage("Warning: Error while creating PDF File: " + newPdfFileName);
                         return;
                     }
 
